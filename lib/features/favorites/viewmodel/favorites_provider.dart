@@ -37,14 +37,14 @@ class FavoritesNotifier extends StateNotifier<List<FavoriteCity>> {
     await prefs.setString(_key, jsonString);
   }
 
-  // ➕ ADD
+  //  ADD
   void addCity(FavoriteCity city) {
     if (state.any((c) => c.name == city.name)) return;
     state = [...state, city];
     _saveFavorites();
   }
 
-  // ✏️ UPDATE
+  //  UPDATE
   void updateCity(int index, FavoriteCity city) {
     final updated = [...state];
     updated[index] = city;
@@ -52,7 +52,7 @@ class FavoritesNotifier extends StateNotifier<List<FavoriteCity>> {
     _saveFavorites();
   }
 
-  // ❌ DELETE
+  //  DELETE
   void removeCity(FavoriteCity city) {
     state = state.where((c) => c.name != city.name).toList();
     _saveFavorites();

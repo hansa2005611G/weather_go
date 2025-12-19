@@ -74,11 +74,16 @@ class _FavoritesScreenState
                               _editCityDialog(
                                   context, index, city);
                             } else if (value == 'delete') {
-                              ref
-                                  .read(favoritesProvider
-                                      .notifier)
-                                  .removeCity(city);
-                            }
+                                ref.read(favoritesProvider.notifier).removeCity(city);
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('${city.name} removed from favorites'),
+                                    duration: const Duration(seconds: 2),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
                           },
                           itemBuilder: (_) => const [
                             PopupMenuItem(

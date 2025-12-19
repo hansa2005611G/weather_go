@@ -106,6 +106,13 @@ class HomeScreen extends ConsumerWidget {
                                           weather.condition,
                                     ),
                                   );
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('${weather.city} added to favorites'),
+                                      duration: const Duration(seconds: 2),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
 
                               Navigator.push(
                                 context,
