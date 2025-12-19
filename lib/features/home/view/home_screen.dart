@@ -57,191 +57,210 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
             child: SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await ref
+                      .read(homeProvider.notifier)
+                      .loadByCity(weather.city);
 
-                    /// 🔝 TOP BAR
-                    ListTile(
-                      leading: IconButton(
-                        icon: const Icon(Icons.search,
-                            color: Colors.white),
-                        onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Weather updated'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                      /// 🔝 TOP BAR
+                      ListTile(
+                        leading: IconButton(
+                          icon: const Icon(Icons.search,
+                              color: Colors.white),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const SearchLocationScreen(),
+                              ),
+                            );
+                          },
+                        ),
+
+                        title: Text(
+                          weather.city,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+
+                            // ⭐ Favorite
+                            IconButton(
+                              icon: const Icon(Icons.star_border,
+                                  color: Colors.white),
+                              onPressed: () {
+                                ref
+                                    .read(favoritesProvider.notifier)
+                                    .addCity(
+                                      FavoriteCity(
+                                        name: weather.city,
+                                        temp: weather.temp,
+                                        condition:
+                                            weather.condition,
+                                      ),
+                                    );
+
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        '${weather.city} added to favorites'),
+                                    duration:
+                                        const Duration(seconds: 2),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const FavoritesScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+
+                            // 🔔 Alerts
+                            IconButton(
+                              icon: const Icon(Icons.notifications,
+                                  color: Colors.white),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const WeatherAlertsScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+
+                            // ⚙️ Settings
+                            IconButton(
+                              icon: const Icon(Icons.settings,
+                                  color: Colors.white),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const SettingsScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      /// 🌡 HERO SECTION
+                      const SizedBox(height: 16),
+                      Center(
+                        child: Text(
+                          '${convert(weather.temp).toStringAsFixed(1)}$unitSymbol',
+                          style: const TextStyle(
+                            fontSize: 46,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          weather.condition,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+
+                      /// 🕒 HOURLY FORECAST
+                      _sectionTitle('Hourly Forecast'),
+                      SizedBox(
+                        height: 130,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: data.hourly.length,
+                          itemBuilder: (context, index) {
+                            final hour = data.hourly[index];
+                            final time =
+                                DateTime.fromMillisecondsSinceEpoch(
+                                    hour.dt * 1000);
+
+                            return _hourlyCard(
+                              time.hour,
+                              convert(hour.temp),
+                              unitSymbol,
+                              hour.icon,
+                            );
+                          },
+                        ),
+                      ),
+
+                      /// 📅 7-DAY FORECAST
+                      GestureDetector(
+                        onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (_) =>
-                                  const SearchLocationScreen(),
+                                  DetailedForecastScreen(
+                                city: weather.city,
+                                hourly: data.hourly,
+                                daily: data.daily,
+                              ),
                             ),
                           );
                         },
+                        child: _sectionTitle(
+                            '7-Day Forecast (Tap for details)'),
                       ),
 
-                      title: Text(
-                        weather.city,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-
-                          // ⭐ Favorite
-                          IconButton(
-                            icon: const Icon(Icons.star_border,
-                                color: Colors.white),
-                            onPressed: () {
-                              ref
-                                  .read(favoritesProvider.notifier)
-                                  .addCity(
-                                    FavoriteCity(
-                                      name: weather.city,
-                                      temp: weather.temp,
-                                      condition:
-                                          weather.condition,
-                                    ),
-                                  );
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('${weather.city} added to favorites'),
-                                      duration: const Duration(seconds: 2),
-                                      backgroundColor: Colors.green,
-                                    ),
-                                  );
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      const FavoritesScreen(),
-                                ),
-                              );
-                            },
-                          ),
-
-                          // 🔔 Alerts
-                          IconButton(
-                            icon: const Icon(Icons.notifications,
-                                color: Colors.white),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      const WeatherAlertsScreen(),
-                                ),
-                              );
-                            },
-                          ),
-
-                          // ⚙️ Settings
-                          IconButton(
-                            icon: const Icon(Icons.settings,
-                                color: Colors.white),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      const SettingsScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    /// 🌡 HERO SECTION
-                    const SizedBox(height: 16),
-                    Center(
-                      child: Text(
-                        '${convert(weather.temp).toStringAsFixed(1)}$unitSymbol',
-                        style: const TextStyle(
-                          fontSize: 46,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: Text(
-                        weather.condition,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-
-                    /// 🕒 HOURLY FORECAST
-                    _sectionTitle('Hourly Forecast'),
-                    SizedBox(
-                      height: 130,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: data.hourly.length,
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics:
+                            const NeverScrollableScrollPhysics(),
+                        itemCount: data.daily.length,
                         itemBuilder: (context, index) {
-                          final hour = data.hourly[index];
-                          final time =
+                          final day = data.daily[index];
+                          final date =
                               DateTime.fromMillisecondsSinceEpoch(
-                                  hour.dt * 1000);
+                                  day.dt * 1000);
 
-                          return _hourlyCard(
-                            time.hour,
-                            convert(hour.temp),
+                          return _dailyCard(
+                            date,
+                            convert(day.max),
+                            convert(day.min),
                             unitSymbol,
-                            hour.icon,
+                            day.icon,
                           );
                         },
                       ),
-                    ),
-
-                    /// 📅 7-DAY FORECAST
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                DetailedForecastScreen(
-                              city: weather.city,
-                              hourly: data.hourly,
-                              daily: data.daily,
-                            ),
-                          ),
-                        );
-                      },
-                      child: _sectionTitle(
-                          '7-Day Forecast (Tap for details)'),
-                    ),
-
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics:
-                          const NeverScrollableScrollPhysics(),
-                      itemCount: data.daily.length,
-                      itemBuilder: (context, index) {
-                        final day = data.daily[index];
-                        final date =
-                            DateTime.fromMillisecondsSinceEpoch(
-                                day.dt * 1000);
-
-                        return _dailyCard(
-                          date,
-                          convert(day.max),
-                          convert(day.min),
-                          unitSymbol,
-                          day.icon,
-                        );
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
