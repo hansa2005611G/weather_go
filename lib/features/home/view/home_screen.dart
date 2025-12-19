@@ -76,7 +76,7 @@ class HomeScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
 
-                      /// 🔝 TOP BAR
+                      /// TOP BAR
                       ListTile(
                         leading: IconButton(
                           icon: const Icon(Icons.search,
@@ -105,7 +105,7 @@ class HomeScreen extends ConsumerWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
 
-                            // ⭐ Favorite
+                            // Favorite
                             IconButton(
                               icon: const Icon(Icons.star_border,
                                   color: Colors.white),
@@ -142,7 +142,7 @@ class HomeScreen extends ConsumerWidget {
                               },
                             ),
 
-                            // 🔔 Alerts
+                            // Alerts
                             IconButton(
                               icon: const Icon(Icons.notifications,
                                   color: Colors.white),
@@ -157,7 +157,7 @@ class HomeScreen extends ConsumerWidget {
                               },
                             ),
 
-                            // ⚙️ Settings
+                            //  Settings
                             IconButton(
                               icon: const Icon(Icons.settings,
                                   color: Colors.white),

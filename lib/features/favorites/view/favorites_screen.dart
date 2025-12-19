@@ -50,7 +50,7 @@ class _FavoritesScreenState
             ),
           ),
 
-          // 📋 LIST
+          // LIST
           Expanded(
             child: filtered.isEmpty
                 ? const Center(
@@ -97,7 +97,7 @@ class _FavoritesScreenState
                           ],
                         ),
 
-                        // 🔁 NAVIGATE BACK TO HOME
+                        // NAVIGATE BACK TO HOME
                         onTap: () {
                           Navigator.pop(context, city.name);
                         },
@@ -110,7 +110,7 @@ class _FavoritesScreenState
     );
   }
 
-  // ✏️ EDIT DIALOG
+  // EDIT DIALOG
   void _editCityDialog(
     BuildContext context,
     int index,

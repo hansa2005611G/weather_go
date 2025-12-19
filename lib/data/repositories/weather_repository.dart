@@ -19,13 +19,13 @@ class WeatherRepository {
     return WeatherModel.fromJson(response.data);
   }
 
-  // Forecast using FREE /forecast API
+  // Forecast 
   Future<Map<String, dynamic>> fetchForecast(
       double lat, double lon) async {
     final response = await api.get5DayForecast(lat, lon);
     final List list = response.data['list'];
 
-    // Hourly forecast (next 24h ≈ 8 items)
+    // Hourly forecast 
     final List<HourlyForecast> hourly = list.take(8).map((e) {
       return HourlyForecast(
         dt: e['dt'],
@@ -34,7 +34,7 @@ class WeatherRepository {
       );
     }).toList();
 
-    // Daily forecast (grouped by date)
+    // Daily forecast 
     final Map<String, DailyForecast> dailyMap = {};
 
     for (final e in list) {

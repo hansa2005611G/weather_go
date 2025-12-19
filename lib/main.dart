@@ -5,7 +5,7 @@ import 'features/home/view/home_screen.dart';
 import 'features/settings/viewmodel/settings_provider.dart';
 
 Future<void> main() async {
-  // ✅ REQUIRED for SharedPreferences & async services
+  // REQUIRED for SharedPreferences & async services
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
@@ -26,7 +26,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       title: 'Weather Go',
 
-      // 🌞 LIGHT THEME
+      // LIGHT THEME
       theme: ThemeData(
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
@@ -41,7 +41,7 @@ class MyApp extends ConsumerWidget {
         ),
       ),
 
-      // 🌙 DARK THEME
+      // DARK THEME
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.blue,
@@ -63,7 +63,7 @@ class MyApp extends ConsumerWidget {
         ),
       ),
 
-      // 🌗 THEME MODE FROM SETTINGS (PERSISTED)
+      // THEME MODE FROM SETTINGS (PERSISTED)
       themeMode:
           settings.darkMode ? ThemeMode.dark : ThemeMode.light,
 
